@@ -1,0 +1,67 @@
+version: "3.8"
+services:
+
+  # Django application
+  app:
+    restart: always
+    container_name: django-blog
+    build:
+      context: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - postgres
+
+  # Postgres database
+  postgres:
+    container_name: postgres_blog
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  # Redis
+  redis:
+    container_name: redis
+    restart: always
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  # Celery
+  celery:
+    container_name: celery_blog
+    restart: always
+    build:
+      context: .
+    command: celery -A blog worker -l info
+    environment:
+      - DDEBUG=1
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379:0
+    depends_on:
+      - redis
+    volumes:
+      - .:/usr/src/app
+
+  # Celery beat
+  celery-beat:
+    container_name: celery_beat_blog
+    restart: always
+    build:
+      context: .
+    command: celery -A blog beat -l info
+    depends_on:
+      - celery
+      - redis
+    volumes:
+      - .:/usr/src/app
+
