@@ -162,8 +162,8 @@ CELERY_TASK_TRACK_STARTED = True
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.gmail.com"
-EMAIL_HOST_USER = "soroosh.django@gmail.com"
-EMAIL_HOST_PASSWORD = "vuovsiwntxvqbkno"
+EMAIL_HOST_USER = "Your email"
+EMAIL_HOST_PASSWORD = "**************"
 EMAIL_PORT = 587
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
